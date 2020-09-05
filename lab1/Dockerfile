@@ -27,6 +27,8 @@ ENV HADOOP_HOME=/home/dataintensive/hadoop-3.1.2
 ENV HADOOP_CONFIG=$HADOOP_HOME/etc/hadoop
 ENV PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
 
+# TODO: Set JAVA_HOME in the $HADOOP_CONFIG/hadoop-env.sh shell script. >>export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+
 ENV NAMENODE_PATH=/home/namenode
 ENV DATANODE_PATH=/home/datanode
 RUN mkdir -p $NAMENODE_PATH
@@ -43,8 +45,8 @@ RUN echo "\
         </property>\
     </configuration>" >> $HADOOP CONFIG/core-site.xml
 
-RUN sed -i "s|PATH_TO_NAMENODE|$NAMENODE_PATH |g" $HADOOP CONFIG/hdfs-site.xml
-RUN sed -i "s|PATH_TO_DATANODE|$DATANODE_PATH |g" $HADOOP CONFIG/hdfs-site.xml
+RUN sed -i "s|PATH_TO_NAMENODE|$NAMENODE_PATH |g" $HADOOP_CONFIG/hdfs-site.xml
+RUN sed -i "s|PATH_TO_DATANODE|$DATANODE_PATH |g" $HADOOP_CONFIG/hdfs-site.xml
 
 RUN $HADOOP_HOME/bin/hdfs namenode -format
 
@@ -54,3 +56,25 @@ EXPOSE 9870
 EXPOSE 4040
 
 ENTRYPOINT $HADOOP_HOME/bin/hdfs --daemon start namenode && $HADOOP_HOME/bin/hdfs --daemon start datanode
+
+##################
+##### HBase ######
+##################
+
+RUN apt install openssh-server
+
+WORKDIR / 
+RUN wget https://archive.apache.org/dist/hbase/1.4.10/hbase-1.4.10-bin.tar.gz tar -xvf hbase-1.4.10-bin.tar.gz
+
+ENV HBASE_HOME=/path/to/the/hbase/folder
+ENV HBASE_CONF=$HBASE_HOME/conf
+ENV PATH=$HBASE_HOME/bin:$PATH
+
+# TODO: Edit JAVA_HOME in $HBASE_CONF/hbase-env.sh. >>export JAVA_HOME="/path/to/the/java/folder"
+
+ENV ZOOKEEPER_PATH=$HBASE_HOME/zookeeper
+RUN mkdir -p $ZOOKEEPER_PATH
+
+RUN sed -i "s|PATH_TO_ZOOKEEPER|$ZOOKEEPER_PATH |g" $HBASE_CONF/hbase-site.xml
+
+ENTRYPOINT $HBASE_HOME/bin/start-hbase.sh
