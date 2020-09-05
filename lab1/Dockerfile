@@ -75,11 +75,13 @@ RUN apt-get update
 RUN wget https://archive.apache.org/dist/hbase/1.4.10/hbase-1.4.10-bin.tar.gz 
 RUN tar -xvf hbase-1.4.10-bin.tar.gz
 
-ENV HBASE_HOME=$APP_HOME/hbase
+ENV HBASE_HOME=$APP_HOME/hbase-1.4.10
 ENV HBASE_CONF=$HBASE_HOME/conf
 ENV PATH=$HBASE_HOME/bin:$PATH
 
-# TODO: Edit JAVA_HOME in $HBASE_CONF/hbase-env.sh. >>export JAVA_HOME="/path/to/the/java/folder"
+# In Docs it says do >>export JAVA_HOME=/path/to/the/java/folder
+RUN sed "s|# export JAVA_HOME=.*|export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64|g" $HBASE_CONF/hbase-env.sh
+RUN bash -c 'cat $HBASE_CONF/hbase-env.sh'
 
 ENV ZOOKEEPER_PATH=$HBASE_HOME/zookeeper
 RUN mkdir -p $ZOOKEEPER_PATH
