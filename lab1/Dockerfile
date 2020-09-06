@@ -38,16 +38,12 @@ ENV DATANODE_PATH=$APP_HOME/datanode
 RUN mkdir -p $NAMENODE_PATH
 RUN mkdir -p $DATANODE_PATH
 
-RUN apt-get install -y xmlstarlet
-RUN apt-get update
+ADD core-site.xml $HADOOP_CONFIG
 
-RUN xmlstarlet edit --inplace -s '//configuration'  -t elem -n 'property'  \
-	-s '//configuration/property'  -t elem -n 'name' -v 'fs.defaultFS' \
-	-s '//configuration/property'  -t elem -n 'value' -v 'hdfs://127.0.0.1:9000' \
-	-s '//configuration/property'  -t elem -n 'description' -v 'NameNode URI' $HADOOP_CONFIG/core-site.xml
-
-RUN sed -i "s|PATH_TO_NAMENODE|$NAMENODE_PATH |g" $HADOOP_CONFIG/hdfs-site.xml
-RUN sed -i "s|PATH_TO_DATANODE|$DATANODE_PATH |g" $HADOOP_CONFIG/hdfs-site.xml
+# TODO: Output: "<value>file:///home/dataintensive/namenode </value>"; Maybe remove one dash
+ADD hdfs-site.xml $HADOOP_CONFIG
+RUN sed -i "s|PATH_TO_NAMENODE|$NAMENODE_PATH|g" $HADOOP_CONFIG/hdfs-site.xml
+RUN sed -i "s|PATH_TO_DATANODE|$DATANODE_PATH|g" $HADOOP_CONFIG/hdfs-site.xml
 
 RUN $HADOOP_HOME/bin/hdfs namenode -format
 
@@ -71,7 +67,8 @@ RUN sed "s|# export JAVA_HOME=.*|export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-am
 ENV ZOOKEEPER_PATH=$HBASE_HOME/zookeeper
 RUN mkdir -p $ZOOKEEPER_PATH
 
-RUN sed -i "s|PATH_TO_ZOOKEEPER|$ZOOKEEPER_PATH |g" $HBASE_CONF/hbase-site.xml
+ADD hbase-site.xml $HBASE_CONF
+RUN sed -i "s|PATH_TO_ZOOKEEPER|$ZOOKEEPER_PATH|g" $HBASE_CONF/hbase-site.xml
 
 ADD ./src $APP_HOME/src
 
