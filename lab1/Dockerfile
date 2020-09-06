@@ -71,14 +71,14 @@ ADD hbase-site.xml $HBASE_CONF
 RUN sed -i "s|PATH_TO_ZOOKEEPER|$ZOOKEEPER_PATH|g" $HBASE_CONF/hbase-site.xml
 
 ADD ./src $APP_HOME/src
+ADD ./tests $APP_HOME/tests
+ADD ./entrypoint.sh $APP_HOME
+
+RUN chmod +x $APP_HOME/entrypoint.sh
 
 EXPOSE 9864
 EXPOSE 8888
 EXPOSE 9870
 EXPOSE 4040
 
-# Hadoop: 
-# ENTRYPOINT $HADOOP_HOME/bin/hdfs --daemon start namenode && $HADOOP_HOME/bin/hdfs --daemon start datanode
-
-# HBase:
-# ENTRYPOINT $HBASE_HOME/bin/start-hbase.sh
+ENTRYPOINT $APP_HOME/entrypoint.sh

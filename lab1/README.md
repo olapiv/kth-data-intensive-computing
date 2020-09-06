@@ -9,5 +9,7 @@
 ## Run
 
 ```bash
-    docker run -it dic-lab1:latest
+    docker run -it \
+        -p 9870:9870 -p 9864:9864 \
+        dic-lab1:latest
 ```
