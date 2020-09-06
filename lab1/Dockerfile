@@ -74,6 +74,7 @@ ADD ./src $APP_HOME/src
 ADD ./tests $APP_HOME/tests
 ADD ./entrypoint.sh $APP_HOME
 
+RUN chmod -R +x $APP_HOME/tests
 RUN chmod +x $APP_HOME/entrypoint.sh
 
 EXPOSE 9864
@@ -81,4 +82,4 @@ EXPOSE 8888
 EXPOSE 9870
 EXPOSE 4040
 
-ENTRYPOINT $APP_HOME/entrypoint.sh
+# ENTRYPOINT $APP_HOME/entrypoint.sh
