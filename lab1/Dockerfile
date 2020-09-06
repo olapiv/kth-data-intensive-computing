@@ -38,27 +38,13 @@ ENV DATANODE_PATH=$APP_HOME/datanode
 RUN mkdir -p $NAMENODE_PATH
 RUN mkdir -p $DATANODE_PATH
 
-# WORKDIR $HADOOP_HOME
-
-# RUN echo "\
-#     <configuration>\
-#         <property>\
-#             <name>fs.defaultFS</name>\
-#             <value>hdfs://127.0.0.1:9000</value>\
-#             <description>NameNode URI</description>\
-#         </property>\
-#     </configuration>" >> $HADOOP_CONFIG/core-site.xml
-
 RUN apt-get install -y xmlstarlet
+RUN apt-get update
 
-RUN bash -c 'cat $HADOOP_CONFIG/core-site.xml'
-
-RUN xmlstarlet ed -s '//configuration'  -t elem -n 'property'  \
+RUN xmlstarlet edit --inplace -s '//configuration'  -t elem -n 'property'  \
 	-s '//configuration/property'  -t elem -n 'name' -v 'fs.defaultFS' \
 	-s '//configuration/property'  -t elem -n 'value' -v 'hdfs://127.0.0.1:9000' \
 	-s '//configuration/property'  -t elem -n 'description' -v 'NameNode URI' $HADOOP_CONFIG/core-site.xml
-
-RUN bash -c 'cat $HADOOP_CONFIG/core-site.xml'
 
 RUN sed -i "s|PATH_TO_NAMENODE|$NAMENODE_PATH |g" $HADOOP_CONFIG/hdfs-site.xml
 RUN sed -i "s|PATH_TO_DATANODE|$DATANODE_PATH |g" $HADOOP_CONFIG/hdfs-site.xml
@@ -79,9 +65,8 @@ ENV HBASE_HOME=$APP_HOME/hbase-1.4.10
 ENV HBASE_CONF=$HBASE_HOME/conf
 ENV PATH=$HBASE_HOME/bin:$PATH
 
-# In Docs it says do >>export JAVA_HOME=/path/to/the/java/folder
+# In Docs it says "export JAVA_HOME=/path/to/the/java/folder"
 RUN sed "s|# export JAVA_HOME=.*|export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64|g" $HBASE_CONF/hbase-env.sh
-RUN bash -c 'cat $HBASE_CONF/hbase-env.sh'
 
 ENV ZOOKEEPER_PATH=$HBASE_HOME/zookeeper
 RUN mkdir -p $ZOOKEEPER_PATH
@@ -90,13 +75,13 @@ RUN sed -i "s|PATH_TO_ZOOKEEPER|$ZOOKEEPER_PATH |g" $HBASE_CONF/hbase-site.xml
 
 ADD ./src $APP_HOME/src
 
+EXPOSE 9864
+EXPOSE 8888
+EXPOSE 9870
+EXPOSE 4040
+
 # Hadoop: 
 # ENTRYPOINT $HADOOP_HOME/bin/hdfs --daemon start namenode && $HADOOP_HOME/bin/hdfs --daemon start datanode
 
 # HBase:
 # ENTRYPOINT $HBASE_HOME/bin/start-hbase.sh
-
-EXPOSE 9864
-EXPOSE 8888
-EXPOSE 9870
-EXPOSE 4040
