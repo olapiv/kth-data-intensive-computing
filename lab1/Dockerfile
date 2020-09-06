@@ -69,6 +69,14 @@ RUN mkdir -p $ZOOKEEPER_PATH
 ADD hbase-site.xml $HBASE_CONF
 RUN sed --in-place "s|PATH_TO_ZOOKEEPER|$ZOOKEEPER_PATH|g" $HBASE_CONF/hbase-site.xml
 
+# Generate ssh key without password
+RUN mkdir -p $HOME/.ssh
+RUN ssh-keygen -t rsa -P "" -f $HOME/.ssh/id_rsa
+
+# Copy id_rsa.pub to authorized-keys
+RUN mkdir -p $HOME/.ssh
+RUN cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
 ADD ./src $APP_HOME/src
 ADD ./tests $APP_HOME/tests
 ADD ./entrypoint.sh $APP_HOME
