@@ -13,6 +13,7 @@
    ```bash
     docker run -it \
         -p 9870:9870 -p 9864:9864 \
+        -v ${PWD}/src:/home/dataintensive/src \
         dic-lab1:latest
     ```
 

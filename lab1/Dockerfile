@@ -77,7 +77,7 @@ RUN ssh-keygen -t rsa -P "" -f $HOME/.ssh/id_rsa
 RUN mkdir -p $HOME/.ssh
 RUN cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
-ADD ./src $APP_HOME/src
+# ADD ./src $APP_HOME/src
 ADD ./tests $APP_HOME/tests
 ADD ./entrypoint.sh $APP_HOME
 

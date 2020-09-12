@@ -104,3 +104,8 @@ run_development.sh
 
 ### VSCode ###
 .vscode/
+.metals/
+
+### Project ###
+lab1/src/id2221/wordcount_classes
+*.jar
