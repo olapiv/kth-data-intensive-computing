@@ -13,7 +13,7 @@
 
    ```bash
     docker run -it \
-        -p 9870:9870 -p 9864:9864 \
+        -p 9870:9870 -p 9864:9864 -p 8888:8888 \
         -v ${PWD}/src:/home/dataintensive/src \
         dic-lab1:latest
     ```
@@ -24,6 +24,7 @@
 
 1. Run `$APP_HOME/tests/test_hadoop.sh` to check whether Hadoop is working (optional)
 
+<<<<<<< HEAD
 1. Open http://127.0.0.1:9870 or http://127.0.0.1:9864 in Browser to check port mapping
 
 ## Task 1
@@ -45,3 +46,6 @@
     1. $HBASE_HOME/bin/hbase shell
     1. In HBASE shell run `scan 'topten'`
     1. Exit shell (ctrl + c)
+=======
+1. Open http://127.0.0.1:9870 or http://127.0.0.1:9864 or http://127.0.0.1:8888 in Browser to check port mapping
+>>>>>>> 9368cdc... added the necessary software needed for part 2
