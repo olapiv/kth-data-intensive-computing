@@ -66,11 +66,6 @@ public class TopTen {
             // Would replace any record with the same reputation as another record:
             repToRecordMap.put(Integer.parseInt(dataMap.get("Reputation")), new Text(dataMap.get("Id")));
 
-            // Avoid having too many entries in TreeMap
-            // if (repToRecordMap.size() > 10) {
-            //     repToRecordMap.pollLastEntry();
-            // }
-
         }
 
         // cleanup() gets called once after all key-value pairs have been through the
@@ -89,16 +84,13 @@ public class TopTen {
                 if (count >= 10)
                     break;
 
-                // Expected org.apache.hadoop.hbase.io.ImmutableBytesWritable, received
-                // org.apache.hadoop.io.NullWritable
-                context.write(NullWritable.get(), pair.getValue());
+                // rep /// id
+                Text encodedKeyValue = new Text(pair.getKey().toString() + "///" + pair.getValue());
+                context.write(NullWritable.get(), encodedKeyValue);
 
-                // context.write(pair.getKey(), new ImmutableBytesWritable(pair.getValue()));
+                // Can write multiple values into same key (0)
+                // context.write(NullWritable.get(), pair.getValue());
 
-                // Reputation could be null, but not ID
-
-                // context.write(new Text(pair.getValue()), new NullWritable(pair.getKey()));
-                // context.write(new NullWritable(pair.getKey()), new Text(pair.getValue()));
                 count++;
             }
         }
@@ -116,14 +108,17 @@ public class TopTen {
             try {
                 int count = 0;
                 System.out.println("key: " + key);
+                // Collections.reverse(values); // Does not seem to be working
                 for (Text val : values) {
                     System.out.println("val: " + val);
+                    String[] decoded = val.toString().split("///");
 
                     // create hbase put with rowkey as date
                     Put insHBase = new Put(Bytes.toBytes(count));
 
                     // insert sum value to hbase
-                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("id"), val.getBytes());
+                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("id"), Bytes.toBytes(decoded[1]));
+                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("rep"), Bytes.toBytes(decoded[0]));
 
                     // write data to Hbase table
                     context.write(null, insHBase);
