@@ -108,4 +108,6 @@ run_development.sh
 
 ### Project ###
 lab1/src/id2221/wordcount_classes
+lab1/src/id2221/hbase_classes
+lab1/src/id2221/topten_classes
 *.jar
