@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.HashMap;
+import java.util.Collections;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -48,7 +49,7 @@ public class TopTen {
     public static class TopTenMapper extends Mapper<Object, Text, NullWritable, Text> {
         // A TreeMap is a subclass of Map that sorts on key
         // Stores a map of user reputation to the record (id?)
-        TreeMap<Integer, Text> repToRecordMap = new TreeMap<Integer, Text>();
+        TreeMap<Integer, Text> repToRecordMap = new TreeMap<Integer, Text>(Collections.reverseOrder());
 
         // The mappers should filter their input split to the top ten records
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -62,11 +63,13 @@ public class TopTen {
                 return;
             }
 
-            // System.out.println("Id: " + dataMap.get("Id"));
-            // System.out.println("Reputation: " + dataMap.get("Reputation"));
-
             // Would replace any record with the same reputation as another record:
             repToRecordMap.put(Integer.parseInt(dataMap.get("Reputation")), new Text(dataMap.get("Id")));
+
+            // Avoid having too many entries in TreeMap
+            // if (repToRecordMap.size() > 10) {
+            //     repToRecordMap.pollLastEntry();
+            // }
 
         }
 
