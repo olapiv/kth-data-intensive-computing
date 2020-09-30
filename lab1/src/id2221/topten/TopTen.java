@@ -98,31 +98,44 @@ public class TopTen {
 
     public static class TopTenReducer extends TableReducer<NullWritable, Text, NullWritable> {
         // Stores a map of user reputation to the record
-        private TreeMap<Integer, Text> repToRecordMap = new TreeMap<Integer, Text>();
+        private TreeMap<Integer, String> repToRecordMap = new TreeMap<Integer, String>(Collections.reverseOrder());
+        private TreeMap<Integer, String> topTenMap = new TreeMap<Integer, String>();
 
         public void reduce(NullWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
             // <FILL IN>
             // columns rep and id should be created in your Java code
 
+            System.out.println("key: " + key);
+
+            // Sort all incoming values in TreeMap
+            for (Text val : values) {
+                System.out.println("val: " + val);
+                String[] decoded = val.toString().split("///");
+
+                repToRecordMap.put(Integer.parseInt(decoded[0]), decoded[1]);
+            }
+
+            // Limit TreeMap to top 10
+            topTenMap = repToRecordMap.entrySet().stream().limit(10).collect(TreeMap::new,
+                    (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
+
+            // Iterate over top 10 and insert into HBASE descending
             try {
                 int count = 0;
-                System.out.println("key: " + key);
-                // Collections.reverse(values); // Does not seem to be working
-                for (Text val : values) {
-                    System.out.println("val: " + val);
-                    String[] decoded = val.toString().split("///");
+                for (Map.Entry<Integer, String> pair : topTenMap.entrySet()) {
 
                     // create hbase put with rowkey as date
                     Put insHBase = new Put(Bytes.toBytes(count));
 
                     // insert sum value to hbase
-                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("id"), Bytes.toBytes(decoded[1]));
-                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("rep"), Bytes.toBytes(decoded[0]));
+                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("rep"), Bytes.toBytes(pair.getKey()));
+                    insHBase.addColumn(Bytes.toBytes("info"), Bytes.toBytes("id"), Bytes.toBytes(pair.getValue()));
 
                     // write data to Hbase table
                     context.write(null, insHBase);
                     count++;
+
                 }
 
             } catch (Exception e) {
