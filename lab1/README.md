@@ -36,7 +36,7 @@
     1. In HBASE shell run `create 'topten', 'info'`
     1. Exit shell (ctrl + c)
 
-1. Run top_ten.java
+1. Run top_ten.java. The output is HBase table.
 
     `$HADOOP_HOME/bin/hadoop jar topten.jar id2221.topten.TopTen topten_input`
 
