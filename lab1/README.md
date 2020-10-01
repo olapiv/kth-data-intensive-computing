@@ -13,7 +13,7 @@
 
    ```bash
     docker run -it \
-        -p 9870:9870 -p 9864:9864 \
+        -p 9870:9870 -p 9864:9864 -p 8888:8888 \
         -v ${PWD}/src:/home/dataintensive/src \
         dic-lab1:latest
     ```
@@ -45,3 +45,8 @@
     1. $HBASE_HOME/bin/hbase shell
     1. In HBASE shell run `scan 'topten'`
     1. Exit shell (ctrl + c)
+
+## Task 2
+1. Run `$APP_HOME/run/jupyter_notebook.sh`
+
+    This will start the Jupyter Notebook on port 8888

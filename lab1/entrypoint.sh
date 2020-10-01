@@ -12,3 +12,6 @@ echo "Starting the ssh server"
 
 echo "Starting HBase"
 yes | $HBASE_HOME/bin/start-hbase.sh
+
+#echo "Starting the Jupyter Notebook server"
+#jupyter notebook --ip=0.0.0.0 --allow-root --no-browser -y --port=8888
