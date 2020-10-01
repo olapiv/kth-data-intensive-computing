@@ -97,7 +97,7 @@ ENV PATH=$PIP_LIBS_BINS:$PATH
 ##### Apache Toree ######
 #########################
 RUN pip3 install --upgrade toree
-RUN jupyter toree install --user --python_exec=’python3’ --spark_home=$SPARK_HOME --spark_opts=’--master=local[*]’
+RUN jupyter toree install --user --python_exec=’python3’ --spark_home=$SPARK_HOME --spark_opts=--master=local[*]
 
 # Generate ssh key without password
 RUN mkdir -p $HOME/.ssh
@@ -110,9 +110,11 @@ RUN cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 # ADD ./src $APP_HOME/src
 ADD ./tests $APP_HOME/tests
 ADD ./entrypoint.sh $APP_HOME
+ADD ./run $APP_HOME/run
 
 RUN chmod -R +x $APP_HOME/tests
 RUN chmod +x $APP_HOME/entrypoint.sh
+RUN chmod -R +x $APP_HOME/run
 
 EXPOSE 9864
 EXPOSE 8888
