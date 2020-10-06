@@ -1,0 +1,96 @@
+FROM ubuntu:18.04
+
+ENV APP_HOME=/home/dataintensive
+
+
+################
+##### JVM ######
+################
+
+RUN apt-get update
+RUN yes | apt-get install curl
+RUN apt-get update
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata wget
+RUN apt-get update
+RUN yes | apt-get install software-properties-common
+RUN apt-get update
+RUN yes | add-apt-repository ppa:openjdk-r/ppa
+RUN apt-get update
+RUN yes | apt-get install openjdk-8-jdk-headless
+RUN apt-get update
+
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+WORKDIR $APP_HOME
+
+#########################
+##### ZooKeeper #############
+#########################
+
+RUN wget https://apache.uib.no/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz
+RUN tar  -xvf apache-zookeeper-3.6.2-bin.tar.gz
+ENV ZOOKEEPER_HOME=$APP_HOME/apache-zookeeper-3.6.2-bin
+ENV PATH=$ZOOKEEPER_HOME/bin:$PATH
+
+#########################
+##### Kafka #############
+#########################
+
+RUN wget https://apache.uib.no/kafka/2.6.0/kafka_2.12-2.6.0.tgz
+RUN tar -xvf kafka_2.12-2.6.0.tgz
+ENV KAFKA_HOME=$APP_HOME/kafka_2.12-2.6.0
+ENV PATH=$KAFKA_HOME/bin:$PATH
+
+#########################
+##### Apache Spark ######
+#########################
+RUN wget https://archive.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz 
+RUN tar -xvf spark-2.4.3-bin-hadoop2.7.tgz
+ENV SPARK_HOME=$APP_HOME/spark-2.4.3-bin-hadoop2.7
+ENV PATH=$SPARK_HOME/bin:$PATH
+
+################
+##### SBT ######
+################
+RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823 
+RUN apt-get update
+RUN yes | apt-get install sbt
+
+#############################
+##### Jupyter Notebook ######
+#############################
+RUN yes | apt install python3-pip
+RUN pip3 install jupyter
+ENV PIP_LIBS_BINS="/home/dataintensive/.local/bin" 
+ENV PATH=$PIP_LIBS_BINS:$PATH
+
+#########################
+##### Apache Toree ######
+#########################
+RUN pip3 install --upgrade toree
+RUN jupyter toree install --user --python_exec=’python3’ --spark_home=$SPARK_HOME --spark_opts=--master=local[*]
+
+# Generate ssh key without password
+RUN mkdir -p $HOME/.ssh
+RUN ssh-keygen -t rsa -P "" -f $HOME/.ssh/id_rsa
+
+# Copy id_rsa.pub to authorized-keys
+RUN mkdir -p $HOME/.ssh
+RUN cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+ADD ./src $APP_HOME/src
+#ADD ./tests $APP_HOME/tests
+#RUN mkdir $APP_HOME/run
+ADD ./entrypoint.sh $APP_HOME
+#ADD ./run $APP_HOME/run
+
+#RUN chmod -R +x $APP_HOME/tests
+RUN chmod +x $APP_HOME/entrypoint.sh
+#RUN chmod -R +x $APP_HOME/run
+
+EXPOSE 2128
+EXPOSE 8888
+#EXPOSE 9870
+#EXPOSE 4040
+
+#ENTRYPOINT $APP_HOME/entrypoint.sh
