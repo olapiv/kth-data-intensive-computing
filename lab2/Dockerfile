@@ -80,13 +80,13 @@ RUN cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
 ADD ./src $APP_HOME/src
 #ADD ./tests $APP_HOME/tests
-#RUN mkdir $APP_HOME/run
+RUN mkdir $APP_HOME/run
 ADD ./entrypoint.sh $APP_HOME
-#ADD ./run $APP_HOME/run
+ADD ./run $APP_HOME/run
 
 #RUN chmod -R +x $APP_HOME/tests
 RUN chmod +x $APP_HOME/entrypoint.sh
-#RUN chmod -R +x $APP_HOME/run
+RUN chmod -R +x $APP_HOME/run
 
 EXPOSE 2128
 EXPOSE 8888
