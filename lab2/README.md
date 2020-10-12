@@ -13,20 +13,37 @@
 
    ```bash
     docker run -it \
-        -p 2128:2128 -p 8888:8888 \
+        -p 2128:2128 -p 8888:8888 -p 9042:9042 \
         -v ${PWD}/src:/home/dataintensive/src \
         dic-lab2:latest
     ```
-
-1. Run `$APP_HOME/entrypoint.sh`
-
-    This will prompt the message *"The authenticity of host 'localhost (127.0.0.1)' can't be established. Are you sure you want to continue connecting (yes/no)?"*. Type in *yes*.
-
-1. Run `$APP_HOME/tests/test_hadoop.sh` to check whether Hadoop is working (optional)
-
-1. Open http://127.0.0.1:9870 or http://127.0.0.1:9864 in Browser to check port mapping
-
 ## Task 1
+1. Run '$APP_HOME/entrypoint.sh'
+
+2. Run 'cd src/sparkstreaming/'
+
+    You should now be in the sparkstreaming directory
+
+3. Run 'setsid nohup sbt run &'
+
+    This will run the KafkaSpark application in the background
+
+4. Run 'cd ..' & then 'cd generator'
+
+    You should now be in the generator directory
+
+4. Run 'sbt run'
+
+    This will start the Producer to generate a streaming input (pairs of "String,int") and feed them to Kafka.
+    Let this run for a while before doing 'ctrl + c' to kill the process/application.
+
+5. Run '$CASSANDRA_HOME/bin/cqlsh'
+
+    This starts the cqlsh prompt
+
+6. Run 'use avg_space; select * from avg;'
+
+    Now you should see some results
 
 [WIP]
 
