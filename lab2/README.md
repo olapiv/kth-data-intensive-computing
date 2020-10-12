@@ -18,30 +18,33 @@
         dic-lab2:latest
     ```
 ## Task 1
-1. Run '$APP_HOME/entrypoint.sh'
+1. Run `$APP_HOME/entrypoint.sh`
 
-2. Run 'cd src/sparkstreaming/'
+2. Run `cd src/sparkstreaming/`
 
     You should now be in the sparkstreaming directory
+    
+3. Run `sbt compile`
+    This will compile the KafkaSpark application
 
-3. Run 'setsid nohup sbt run &'
+4. Run `setsid nohup sbt run &`
 
     This will run the KafkaSpark application in the background
 
-4. Run 'cd ..' & then 'cd generator'
+5. Run `cd ..` & then `cd generator`
 
     You should now be in the generator directory
 
-4. Run 'sbt run'
+6. Run `sbt run`
 
     This will start the Producer to generate a streaming input (pairs of "String,int") and feed them to Kafka.
     Let this run for a while before doing 'ctrl + c' to kill the process/application.
 
-5. Run '$CASSANDRA_HOME/bin/cqlsh'
+7. Run `$CASSANDRA_HOME/bin/cqlsh`
 
     This starts the cqlsh prompt
 
-6. Run 'use avg_space; select * from avg;'
+8. Run `use avg_space; select * from avg;`
 
     Now you should see some results
 
