@@ -41,6 +41,24 @@ ENV KAFKA_HOME=$APP_HOME/kafka_2.12-2.6.0
 ENV PATH=$KAFKA_HOME/bin:$PATH
 
 #########################
+##### Python 2.7 ########
+#########################
+
+RUN yes | apt install python-minimal
+#RUN yes | apt-get install python2
+ENV PYTHONPATH=/usr/bin/python2
+
+####################################
+##### Cassandra & Anaconda #########
+####################################
+RUN wget https://archive.apache.org/dist/cassandra/3.11.2/apache-cassandra-3.11.2-bin.tar.gz
+RUN tar -xvf apache-cassandra-3.11.2-bin.tar.gz
+RUN wget https://repo.anaconda.com/archive/Anaconda2-5.2.0-Linux-x86_64.sh
+ENV CASSANDRA_HOME=$APP_HOME/apache-cassandra-3.11.2
+ENV PATH=$CASSANDRA_HOME/bin:$PATH
+ENV PATH=$PYTHONPATH/bin:$CASSANDRA_HOME/bin:$PATH
+
+#########################
 ##### Apache Spark ######
 #########################
 RUN wget https://archive.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz 
@@ -90,6 +108,7 @@ RUN chmod -R +x $APP_HOME/run
 
 EXPOSE 2128
 EXPOSE 8888
+EXPOSE 9042
 #EXPOSE 9870
 #EXPOSE 4040
 

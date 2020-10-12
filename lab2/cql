@@ -1,0 +1,11 @@
+ create keyspace wordcount_keyspace with replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+ describe keyspaces;
+ 
+use wordcount_keyspace;
+
+create table Words (word text, count int, primary key (word));
+
+insert into Words(word, count) values('hello', 5);
+
+select * from Words;
