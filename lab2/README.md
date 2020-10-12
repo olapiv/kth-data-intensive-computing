@@ -46,9 +46,8 @@
 
 8. Run `use avg_space; select * from avg;`
 
-    Now you should see some results
+    Now you should see the results
 
-[WIP]
 
 ## Task 2
 1. Run `$APP_HOME/run/jupyter_notebook.sh`
