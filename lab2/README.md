@@ -17,13 +17,15 @@
         -v ${PWD}/src:/home/dataintensive/src \
         dic-lab2:latest
     ```
+
 ## Task 1
+
 1. Run `$APP_HOME/entrypoint.sh`
 
 2. Run `cd src/sparkstreaming/`
 
     You should now be in the sparkstreaming directory
-    
+
 3. Run `sbt compile`
     This will compile the KafkaSpark application
 
@@ -48,8 +50,8 @@
 
     Now you should see the results
 
-
 ## Task 2
+
 1. Run `$APP_HOME/run/jupyter_notebook.sh`
 
     This will start the Jupyter Notebook on port 8888
